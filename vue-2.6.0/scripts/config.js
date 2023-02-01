@@ -121,12 +121,12 @@ const builds = {
   },
   // Runtime+compiler development build (Browser)
   'web-full-dev': {
-    entry: resolve('web/entry-runtime-with-compiler.js'),
-    dest: resolve('dist/vue.js'),
-    format: 'umd',
-    env: 'development',
+    entry: resolve('web/entry-runtime-with-compiler.js'), //入口文件路径
+    dest: resolve('dist/vue.js'), // 打包文件路径
+    format: 'umd', // ，模块化方式
+    env: 'development', // 打包方式  
     alias: { he: './entity-decoder' },
-    banner
+    banner  // 文件头
   },
   // Runtime+compiler production build  (Browser)
   'web-full-prod': {
@@ -213,20 +213,23 @@ const builds = {
   }
 }
 
+// 配置项
 function genConfig (name) {
+  // 不同版本的配置
   const opts = builds[name]
   const config = {
-    input: opts.entry,
+    input: opts.entry, // 入口文件路径
     external: opts.external,
     plugins: [
       flow(),
       alias(Object.assign({}, aliases, opts.alias))
     ].concat(opts.plugins || []),
-    output: {
-      file: opts.dest,
-      format: opts.format,
-      banner: opts.banner,
-      name: opts.moduleName || 'Vue'
+    // 打包后的文件路径
+    output: { 
+      file: opts.dest, // 输入目录
+      format: opts.format, //模块化方式
+      banner: opts.banner, // 文件头
+      name: opts.moduleName || 'Vue' 
     },
     onwarn: (msg, warn) => {
       if (!/Circular/.test(msg)) {
@@ -264,6 +267,8 @@ function genConfig (name) {
 }
 
 if (process.env.TARGET) {
+  // 判断环境是否有TARGET  根据TARGET配置不同的配置项
+  // 生成不同的 rollup 配置文件
   module.exports = genConfig(process.env.TARGET)
 } else {
   exports.getBuild = genConfig

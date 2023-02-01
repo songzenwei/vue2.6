@@ -13,8 +13,10 @@ export function initEvents (vm: Component) {
   vm._events = Object.create(null)
   vm._hasHookEvent = false
   // init parent attached events
+  // 获取父组件附加的事件
   const listeners = vm.$options._parentListeners
   if (listeners) {
+    // 获取父组件附加的事件，添加到当前组件
     updateComponentListeners(vm, listeners)
   }
 }
@@ -48,9 +50,11 @@ export function updateComponentListeners (
   updateListeners(listeners, oldListeners || {}, add, remove, createOnceHandler, vm)
   target = undefined
 }
-
+// 初始化事件相关方法
 export function eventsMixin (Vue: Class<Component>) {
   const hookRE = /^hook:/
+  // 观察者模式实现
+  //绑定事件
   Vue.prototype.$on = function (event: string | Array<string>, fn: Function): Component {
     const vm: Component = this
     if (Array.isArray(event)) {
@@ -67,7 +71,7 @@ export function eventsMixin (Vue: Class<Component>) {
     }
     return vm
   }
-
+  //绑定事件，只会触发一次
   Vue.prototype.$once = function (event: string, fn: Function): Component {
     const vm: Component = this
     function on () {
@@ -78,7 +82,7 @@ export function eventsMixin (Vue: Class<Component>) {
     vm.$on(event, on)
     return vm
   }
-
+  // 取消事件
   Vue.prototype.$off = function (event?: string | Array<string>, fn?: Function): Component {
     const vm: Component = this
     // all
@@ -114,7 +118,7 @@ export function eventsMixin (Vue: Class<Component>) {
     }
     return vm
   }
-
+  // 触发事件
   Vue.prototype.$emit = function (event: string): Component {
     const vm: Component = this
     if (process.env.NODE_ENV !== 'production') {

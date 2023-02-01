@@ -88,24 +88,33 @@ export function _createElement (
     children.length = 0
   }
   if (normalizationType === ALWAYS_NORMALIZE) {
+    // 返回一维数组，处理用户手写的 render
     children = normalizeChildren(children)
   } else if (normalizationType === SIMPLE_NORMALIZE) {
+    // 吧二维数组转换成一维数组
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
+  // 是否是字符串
   if (typeof tag === 'string') {
     let Ctor
     ns = (context.$vnode && context.$vnode.ns) || config.getTagNamespace(tag)
+    // 是否是html 中的保留标签
     if (config.isReservedTag(tag)) {
       // platform built-in elements
       vnode = new VNode(
         config.parsePlatformTagName(tag), data, children,
         undefined, undefined, context
       )
-    } else if ((!data || !data.pre) && isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
+      // 判断是否是 自定义组件
+    } else if ((!data || !data.pre) &&
+     isDef(Ctor = resolveAsset(context.$options, 'components', tag))) {
+      // 查找自定义组件构造函数的声明
+      // 根据 Ctor 创建组件的VNode
       // component
       vnode = createComponent(Ctor, data, context, children, tag)
     } else {
+      // 如果不是保留标签 说明是自定义标签
       // unknown or unlisted namespaced elements
       // check at runtime because it may get assigned a namespace when its
       // parent normalizes children
@@ -115,6 +124,7 @@ export function _createElement (
       )
     }
   } else {
+    // 如果不是字符串
     // direct component options / constructor
     vnode = createComponent(tag, data, context, children)
   }

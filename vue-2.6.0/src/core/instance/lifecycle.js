@@ -56,6 +56,7 @@ export function initLifecycle (vm: Component) {
 }
 
 export function lifecycleMixin (Vue: Class<Component>) {
+  // 首次渲染回调用，数据更新会调用
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
     const prevEl = vm.$el
@@ -66,6 +67,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // based on the rendering backend used.
     if (!prevVnode) {
       // initial render
+      // __patch__ 会将比对后的 vnode 存储给 vm.vnode
       vm.$el = vm.__patch__(vm.$el, vnode, hydrating, false /* removeOnly */)
     } else {
       // updates
@@ -163,7 +165,8 @@ export function mountComponent (
         )
       }
     }
-  }
+  } 
+  // 触发 beforeMount 钩子
   callHook(vm, 'beforeMount')
 
   let updateComponent

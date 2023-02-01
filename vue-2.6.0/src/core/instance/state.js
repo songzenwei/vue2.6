@@ -48,8 +48,11 @@ export function proxy (target: Object, sourceKey: string, key: string) {
 export function initState (vm: Component) {
   vm._watchers = []
   const opts = vm.$options
+  // 初始化 props
   if (opts.props) initProps(vm, opts.props)
+  // 初始化 methods
   if (opts.methods) initMethods(vm, opts.methods)
+  // 初始化 data
   if (opts.data) {
     initData(vm)
   } else {
@@ -108,8 +111,8 @@ function initProps (vm: Component, propsOptions: Object) {
   }
   toggleObserving(true)
 }
-
-function initData (vm: Component) {
+// 初始化 data
+function  initData (vm: Component) {
   let data = vm.$options.data
   data = vm._data = typeof data === 'function'
     ? getData(data, vm)
@@ -315,7 +318,7 @@ function createWatcher (
   }
   return vm.$watch(expOrFn, handler, options)
 }
-
+// 注册 vm 的 $data/$props/$set/$delete/$watch
 export function stateMixin (Vue: Class<Component>) {
   // flow somehow has problems with directly declared definition object
   // when using Object.defineProperty, so we have to procedurally build up
@@ -325,6 +328,7 @@ export function stateMixin (Vue: Class<Component>) {
   const propsDef = {}
   propsDef.get = function () { return this._props }
   if (process.env.NODE_ENV !== 'production') {
+      // 如果是开发环境直接设置$data,和$props的属性，会触发一个警告
     dataDef.set = function () {
       warn(
         'Avoid replacing instance root $data. ' +
@@ -336,6 +340,7 @@ export function stateMixin (Vue: Class<Component>) {
       warn(`$props is readonly.`, this)
     }
   }
+  // 使用 defineProperty 设置属性而不是直接定义属性是有原因的( 如果是开发环境不允许直接设置$data,和$props的属性，会触发一个警告 )
   Object.defineProperty(Vue.prototype, '$data', dataDef)
   Object.defineProperty(Vue.prototype, '$props', propsDef)
 
@@ -347,20 +352,27 @@ export function stateMixin (Vue: Class<Component>) {
     cb: any,
     options?: Object
   ): Function {
+    // 获取 Vue 实例 this
     const vm: Component = this
     if (isPlainObject(cb)) {
+      // 判断若果 cb 是对象执行 createWatcher
       return createWatcher(vm, expOrFn, cb, options)
     }
     options = options || {}
+    // 标记为用户 watcher
     options.user = true
+    // 创建用户 watcher 对象
     const watcher = new Watcher(vm, expOrFn, cb, options)
     if (options.immediate) {
+      // 判断 immediate 如果为true
       try {
+        // 立即执行一次 cb 回调，并且吧当前值传入
         cb.call(vm, watcher.value)
       } catch (error) {
         handleError(error, vm, `callback for immediate watcher "${watcher.expression}"`)
       }
     }
+    // 返回取消监听的方法
     return function unwatchFn () {
       watcher.teardown()
     }

@@ -89,6 +89,7 @@ export function nextTick (cb?: Function, ctx?: Object) {
   callbacks.push(() => {
     if (cb) {
       try {
+        // 调用 cb（） 
         cb.call(ctx)
       } catch (e) {
         handleError(e, ctx, 'nextTick')
@@ -99,11 +100,13 @@ export function nextTick (cb?: Function, ctx?: Object) {
   })
   if (!pending) {
     pending = true
+    // 调用
     timerFunc()
   }
   // $flow-disable-line
   if (!cb && typeof Promise !== 'undefined') {
     return new Promise(resolve => {
+      // 返回 promise 对象
       _resolve = resolve
     })
   }

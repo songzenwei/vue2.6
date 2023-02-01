@@ -30,9 +30,11 @@ export function initExtend (Vue: GlobalAPI) {
       validateComponentName(name)
     }
 
+    //自定义以一个组件
     const Sub = function VueComponent (options) {
       this._init(options)
     }
+    // 继承 vue 的原型
     Sub.prototype = Object.create(Super.prototype)
     Sub.prototype.constructor = Sub
     Sub.cid = cid++
@@ -75,6 +77,7 @@ export function initExtend (Vue: GlobalAPI) {
     Sub.sealedOptions = extend({}, Sub.options)
 
     // cache constructor
+    // 吧组件的构造函数缓存到options.ctor中
     cachedCtors[SuperId] = Sub
     return Sub
   }

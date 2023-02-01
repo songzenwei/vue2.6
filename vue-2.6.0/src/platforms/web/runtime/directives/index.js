@@ -1,4 +1,4 @@
-import model from './model'
+import model from './mo del'
 import show from './show'
 
 export default {
